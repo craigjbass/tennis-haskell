@@ -3,6 +3,7 @@ module Tennis (newTennisGame, wonPoint, scoreGame, Player(..)) where
 data TennisGame = Points Score Score | Deuce | Advantage Player | Win Player
 data Score = Love | Fifteen | Thirty | Forty
 data Player = PlayerOne | PlayerTwo
+    deriving(Eq)
 
 newTennisGame = Points Love Love
 
@@ -13,10 +14,11 @@ incrementPoint Thirty = Forty
 wonPoint player Deuce = Advantage player
 wonPoint PlayerTwo (Points Forty Thirty) = Deuce
 wonPoint PlayerOne (Points Thirty Forty) = Deuce
-wonPoint PlayerOne (Advantage PlayerOne) = Win PlayerOne
-wonPoint PlayerOne (Advantage PlayerTwo) = Deuce 
-wonPoint PlayerTwo (Advantage PlayerOne) = Deuce
-wonPoint PlayerTwo (Advantage PlayerTwo) = Win PlayerTwo
+
+wonPoint scorer (Advantage inAdvantage)
+    | scorer == inAdvantage = Win scorer
+    | otherwise = Deuce
+
 wonPoint PlayerOne (Points Forty _) = Win PlayerOne
 wonPoint PlayerTwo (Points _ Forty) = Win PlayerTwo
 wonPoint PlayerOne (Points point other) = Points (incrementPoint point) other
